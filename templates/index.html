@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumAI - AI Career Accelerator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .check-item {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: #475569;
+            align-items: flex-start;
+        }
+
+        .icon-pass {
+            color: #22c55e;
+        }
+
+        .icon-warn {
+            color: #f59e0b;
+        }
+
+        .icon-fail {
+            color: #ef4444;
+        }
+
+        .icon-info {
+            color: #3b82f6;
+        }
+
+        /* Hiring Partners Section */
+        .partners-section {
+            padding: 3rem 0;
+            background: #f8fafc;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logos-grid {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            align-items: center;
+            flex-wrap: wrap;
+            opacity: 0.7;
+        }
+
+        .logos-grid img {
+            height: 35px;
+            filter: grayscale(100%);
+            transition: all 0.3s;
+        }
+
+        .logos-grid img:hover {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        /* Dark Theme Section */
+        .dark-section {
+            background: #0f172a;
+            color: white;
+            padding: 5rem 0;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .dark-card {
+            background: white;
+            color: #1e293b;
+            padding: 2rem;
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+
+        .dark-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .dark-card h3 {
+            color: #0f172a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checklist-item i {
+            color: #22c55e;
+        }
+
+        /* Feature & Resource Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background: #1e293b;
+            color: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .resource-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-img {
+            height: 180px;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .resource-content {
+            padding: 1.5rem;
+        }
+
+        .resource-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 1rem;
+        }
+
+        /* Narrative Feedback Section */
+        .narrative-item {
+            background: #fff;
+            border-left: 4px solid #4f46e5;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .narrative-item.fail {
+            border-left-color: #ef4444;
+        }
+
+        .narrative-item.warn {
+            border-left-color: #f59e0b;
+        }
+
+        .narrative-item.pass {
+            border-left-color: #22c55e;
+        }
+
+        .narrative-item.info {
+            border-left-color: #3b82f6;
+        }
+
+        /* New Sections - Testimonials & FAQ */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .faq-item:hover {
+            background: #f8fafc;
+        }
+
+        .faq-q {
+            font-weight: 600;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-a {
+            margin-top: 1rem;
+            color: #64748b;
+            display: none;
+        }
+
+        .faq-item.active .faq-a {
+            display: block;
+        }
+
+        .faq-item.active .faq-q i {
+            transform: rotate(180deg);
+            transition: transform 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <a href="/" class="logo">
+                <img src="https://img.icons8.com/3d-fluency/94/resume.png" alt="Logo" width="40">
+                ResumAI
+            </a>
+            <div style="display:flex; gap:1.5rem; align-items:center;">
+                <a href="#features" class="nav-link"
+                    style="color:#475569; text-decoration:none; font-weight:500;">Features</a>
+
+                <a href="/jobs" class="nav-btn">Browse Jobs</a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1>AI-Powered Resume Check<br><span
+                        style="background: linear-gradient(to right, #4f46e5, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Beyond
+                        Formatting</span></h1>
+                <p>Get a deep analysis of your resume's content, impact, and skills. Tailored for top tech companies
+                    like Infosys, Google, and TCS.</p>
+
+                <div class="glass-card">
+                    <div class="drop-zone" id="drop-zone">
+                        <img src="https://img.icons8.com/fluency/48/upload-to-cloud.png" style="margin-bottom:1rem;">
+                        <p style="color:#64748b;">Drag & drop your resume (PDF/DOCX)</p>
+                        <input type="file" id="resume-file" accept=".pdf,.docx,.doc" hidden>
+                    </div>
+                    <p id="file-name" style="font-weight:600; color:var(--primary); margin-bottom:1rem;"></p>
+                    <button id="analyze-btn" class="btn-primary" disabled>Check My Resume</button>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-top:1rem;">We check for 16 crucial points across 5
+                        categories.</p>
+                </div>
+            </div>
+            <div class="hero-img">
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/job-search-3428236-2902694.png"
+                    alt="Career Illustration">
+            </div>
+        </section>
+
+        <!-- Hiring Partners (New) -->
+        <div class="partners-section"
+            style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(79, 70, 229, 0.1);">
+            <p
+                style="color:#64748b; font-size:0.9rem; font-weight:600; letter-spacing:1px; margin-bottom:1.5rem; text-transform:uppercase;">
+                Trusted By Top Innovators</p>
+            <div class="logos-grid">
+                <img src="https://logo.clearbit.com/google.com" alt="Google">
+                <img src="https://logo.clearbit.com/infosys.com" alt="Infosys">
+                <img src="https://logo.clearbit.com/tcs.com?size=200" alt="TCS">
+                <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft">
+                <img src="https://logo.clearbit.com/amazon.com" alt="Amazon">
+                <img src="https://logo.clearbit.com/ibm.com" alt="IBM">
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading" class="loading-overlay hidden">
+            <img src="https://cdni.iconscout.com/illustration/premium/thumb/ai-brain-4777598-3977539.png" width="200"
+                style="margin-bottom:2rem; animation: float 3s infinite;">
+            <h2>AI is analyzing your profile...</h2>
+            <p>Checking 5 Pillars: Format, Content, Style, Skills, Sections</p>
+        </div>
+
+        <!-- Dashboard Result (Hidden initially) -->
+        <div id="results-dashboard" class="dashboard hidden">
+            <!-- Header Scope -->
+            <div style="grid-column: span 12; display:flex; justify-content:space-between; align-items:center;">
+                <h2>Analysis Report</h2>
+                <div
+                    style="display:flex; align-items:center; gap:1rem; background:white; padding:0.5rem 1.5rem; border-radius:50px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                    <span style="font-weight:600; color:#64748b;">Overall Score:</span>
+                    <span id="score-display"
+                        style="font-size:1.5rem; font-weight:700; color:var(--primary);">0/100</span>
+                </div>
+            </div>
+
+            <!-- V6 Narrative Suggestions (New) -->
+            <div style="grid-column: span 12; margin-top:2rem;">
+                <h3 style="margin-bottom:1rem;">Detailed Critique</h3>
+                <div id="narrative-container">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- V5 Grid Layout -->
+            <div style="grid-column: span 12;" class="results-grid" id="analysis-grid">
+                <!-- Cards Injected JS -->
+            </div>
+
+            <!-- Jobs -->
+            <div class="jobs-section">
+                <h3 style="margin-bottom:1.5rem;">Recommended Corp Jobs</h3>
+                <div class="job-grid" id="jobs-list">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT SECTIONS (Visible on Home) -->
+    <div id="landing-content">
+
+        <!-- Key Features (Brand Gradient) -->
+        <div id="features"
+            style="background: linear-gradient(135deg, #312e81 0%, #4338ca 100%); padding:6rem 0; margin-top:4rem; position:relative; overflow:hidden;">
+            <!-- Decorators -->
+            <div
+                style="position:absolute; top:-50px; right:-50px; width:200px; height:200px; background:rgba(255,255,255,0.1); border-radius:50%;">
+            </div>
+            <div
+                style="position:absolute; bottom:-50px; left:-50px; width:200px; height:200px; background:rgba(255,255,255,0.05); border-radius:50%;">
+            </div>
+
+            <div class="container" style="position:relative; z-index:1;">
+                <h2 style="text-align:center; color:white; font-size:2.5rem; margin-bottom:2rem;">Key Features of
+                    ResumAI</h2>
+                <div class="feature-grid">
+                    <div class="feature-card"
+                        style="background: rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2);">
+                        <h3>Optimized for ATS</h3>
+                        <p style="color:rgba(255,255,255,0.8);">Use our analysis to implement expert-recommended updates
+                            designed to optimize your resume for
+                            ATS screening.</p>
+                        <div
+                            style="background:#22c55e; width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:absolute; top:2rem; right:2rem; color:white; font-weight:bold; font-size:1.5rem; box-shadow:0 10px 20px rgba(34, 197, 94, 0.4);">
+                            95</div>
+                    </div>
+                    <div class="feature-card"
+                        style="background: rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2);">
+                        <h3>Tailored Content Suggestions</h3>
+                        <p style="color:rgba(255,255,255,0.8);">Add ready-made resume content written by professional
+                            resume analysts to highlight your
+                            relevant skills and experience.</p>
+                        <i class="fas fa-magic"
+                            style="position:absolute; top:2rem; right:2rem; font-size:2rem; color:#818cf8; opacity:0.8;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklist Grid (Enhancv Style) -->
+        <div style="background: linear-gradient(to bottom, #f8fafc, #eff6ff); padding:6rem 0;">
+            <div class="container">
+                <h2 style="text-align:center; font-size:2.5rem; color:#1e293b; margin-bottom:1rem;">Resume Optimization
+                    Checklist</h2>
+                <p style="text-align:center; color:#64748b; max-width:600px; margin: 0 auto 3rem auto;">We check for 16
+                    crucial things across 5 different categories to ensure your resume is ready for top recruiters.</p>
+
+                <div class="dark-grid" style="margin-top:0;">
+                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                        <h3><i class="fas fa-file-alt" style="color:#4f46e5;"></i> Format</h3>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> File format & size</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Resume length</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Formatting consistency</div>
+                    </div>
+                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                        <h3><i class="fas fa-pen-fancy" style="color:#ec4899;"></i> Content</h3>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> ATS parse rate</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Repetition of words</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Spelling and grammar</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Quantifying impact (metrics)
+                        </div>
+                    </div>
+                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                        <h3><i class="fas fa-layer-group" style="color:#06b6d4;"></i> Sections</h3>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Contact information</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Essential sections</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Personality showcase</div>
+                    </div>
+                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                        <h3><i class="fas fa-feather-alt" style="color:#f59e0b;"></i> Style & Skills</h3>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Usage of active voice</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Usage of buzzwords</div>
+                        <div class="checklist-item"><i class="fas fa-check-square"></i> Hard & Soft skills balance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Stories (Testimonials) -->
+        <div style="background:white; padding:6rem 0;">
+            <div class="container">
+                <h2 style="text-align:center; font-size:2.5rem; color:#1e293b; margin-bottom:3rem;">Success Stories</h2>
+                <div class="testimonial-grid">
+                    <div class="testimonial-card">
+                        <p style="color:#64748b; font-style:italic; margin-bottom:1rem;">"ResumAI corrected my passive
+                            voice and helped me quantify my impact. I got an interview at Infosys within a week!"</p>
+                        <div style="display:flex; justify-content:center; align-items:center; gap:0.5rem;">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" width="40"
+                                style="border-radius:50%;">
+                            <strong>Priya S.</strong>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p style="color:#64748b; font-style:italic; margin-bottom:1rem;">"The detailed checklist showed
+                            me I was missing essential keywords for my target role. Highly recommended."</p>
+                        <div style="display:flex; justify-content:center; align-items:center; gap:0.5rem;">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" width="40"
+                                style="border-radius:50%;">
+                            <strong>Rahul M.</strong>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p style="color:#64748b; font-style:italic; margin-bottom:1rem;">"Simple, fast, and effective.
+                            The AI suggestions were spot on, especially regarding formatting."</p>
+                        <div style="display:flex; justify-content:center; align-items:center; gap:0.5rem;">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" width="40"
+                                style="border-radius:50%;">
+                            <strong>Anjali K.</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- FAQ Section -->
+        <div style="background:white; padding:6rem 0;">
+            <div class="container" style="max-width:800px;">
+                <h2 style="text-align:center; font-size:2.5rem; color:#1e293b; margin-bottom:3rem;">Frequently Asked
+                    Questions</h2>
+                <div class="faq-item" onclick="this.classList.toggle('active')">
+                    <div class="faq-q">Is this resume checker free? <i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-a">Yes, ResumAI provides a comprehensive analysis of your resume for free, tailored
+                        for students and professionals.</div>
+                </div>
+                <div class="faq-item" onclick="this.classList.toggle('active')">
+                    <div class="faq-q">How does the AI scoring work? <i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-a">We use Natural Language Processing (NLP) to analyze 5 key pillars: Format,
+                        Content, Skills, Style, and Sections, comparing them against industry standards.</div>
+                </div>
+                <div class="faq-item" onclick="this.classList.toggle('active')">
+                    <div class="faq-q">Is my data secure? <i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-a">Absolutely. Your resume is processed securely and is not stored permanently on
+                        our servers after the session ends.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background:#0f172a; color:#64748b; padding:2rem 0; text-align:center; border-top:1px solid #1e293b;">
+        <p>&copy; 2026 ResumAI. AI-Powered Career Consultancy.</p>
+    </footer>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('resume-file');
+        const fileNameDisplay = document.getElementById('file-name');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const loadingScreen = document.getElementById('loading');
+        const hero = document.getElementById('hero');
+        const dashboard = document.getElementById('results-dashboard');
+
+        // Hide these on analysis
+        const landingContent = document.getElementById('landing-content');
+        const partnersSec = document.querySelector('.partners-section'); // Also hide partners
+
+        // Drag & Drop
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect() {
+            if (fileInput.files.length) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            if (!fileInput.files.length) return;
+            const formData = new FormData();
+            formData.append('resume', fileInput.files[0]);
+
+            loadingScreen.classList.remove('hidden');
+            hero.style.opacity = '0.1';
+            landingContent.style.opacity = '0.1';
+            partnersSec.style.opacity = '0.1';
+
+            try {
+                const response = await fetch('/upload', { method: 'POST', body: formData });
+                const data = await response.json();
+
+                if (response.ok) {
+                    renderDashboard(data);
+                } else {
+                    alert('Error: ' + data.error);
+                    location.reload();
+                }
+            } catch (error) {
+                alert('Analysis failed. Please try again.');
+                location.reload();
+            }
+        });
+
+        function renderDashboard(data) {
+            loadingScreen.classList.add('hidden');
+            hero.style.display = 'none';
+            landingContent.style.display = 'none';
+            partnersSec.style.display = 'none';
+            dashboard.classList.remove('hidden');
+
+            document.getElementById('score-display').textContent = `${data.score}/100`;
+
+            // Render Narrative Feedback
+            const narrContainer = document.getElementById('narrative-container');
+            narrContainer.innerHTML = '';
+            if (data.suggestions && data.suggestions.length > 0) {
+                data.suggestions.forEach(s => {
+                    narrContainer.innerHTML += `
+                        <div class="narrative-item ${s.type}">
+                            <h4 style="color:#1e293b; margin-bottom:0.5rem;">${s.title}</h4>
+                            <p style="color:#475569;">${s.content}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                narrContainer.innerHTML = '<p>No specific narrative feedback.</p>';
+            }
+
+            // Render Checks
+            const grid = document.getElementById('analysis-grid');
+            grid.innerHTML = '';
+
+            const icons = { 'Format': 'fa-file-alt', 'Sections': 'fa-layer-group', 'Content': 'fa-pen-fancy', 'Skills': 'fa-lightbulb', 'Style': 'fa-feather-alt' };
+            const cardsData = data.breakdown.cards || data.breakdown;
+
+            for (const [category, checks] of Object.entries(cardsData)) {
+                let checkHTML = '';
+                if (Array.isArray(checks)) {
+                    checks.forEach(c => {
+                        let iconClass = 'icon-pass fa-check-circle';
+                        if (c.status === 'warn') iconClass = 'icon-warn fa-exclamation-circle';
+                        if (c.status === 'fail') iconClass = 'icon-fail fa-times-circle';
+                        if (c.status === 'info') iconClass = 'icon-info fa-info-circle';
+
+                        checkHTML += `
+                            <div class="check-item">
+                                <i class="fas ${iconClass}" style="margin-top:3px;"></i>
+                                <div>
+                                    <strong>${c.item}</strong>
+                                    <div style="font-size:0.85rem; color:#64748b;">${c.msg}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                grid.innerHTML += `
+                    <div class="result-card">
+                        <div class="card-header">
+                            <i class="fas ${icons[category] || 'fa-check'}" style="color:var(--primary);"></i>
+                            ${category}
+                        </div>
+                        ${checkHTML}
+                    </div>
+                `;
+            }
+
+            const jobsDiv = document.getElementById('jobs-list');
+            jobsDiv.innerHTML = '';
+            data.jobs.slice(0, 6).forEach(job => {
+                const logo = job.logo || 'https://img.icons8.com/fluency/48/company.png';
+                jobsDiv.innerHTML += `
+                    <div class="job-card">
+                        <span class="match-badge">${job.match_score}% Match</span>
+                        <div class="job-header">
+                            <img src="${logo}" class="company-logo" onerror="this.src='https://img.icons8.com/fluency/48/company.png'">
+                            <div>
+                                <h4 style="font-size:1.1rem;">${job.title}</h4>
+                                <p style="font-size:0.9rem; color:#64748b;">${job.company}</p>
+                            </div>
+                        </div>
+                        <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">${job.match_reason ? job.match_reason[0] : 'Matches your skills'}</p>
+                        <a href="${job.url}" target="_blank" class="apply-link">Apply Now</a>
+                    </div>
+                `;
+            });
+            if (data.jobs.length === 0) {
+                jobsDiv.innerHTML = '<p style="text-align:center; grid-column:span 3;">No specific matches found. Try refreshing or adding more specific skills.</p>';
+            }
+        }
+    </script>
+</body>
+
+</html>

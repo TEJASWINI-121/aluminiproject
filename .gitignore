@@ -1,0 +1,8 @@
+# Add this content to .gitignore
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.log
+uploads/
+jobs_cache*.json

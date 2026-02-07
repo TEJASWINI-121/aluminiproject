@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs | ResumAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <a href="/" class="logo">
+                <img src="https://img.icons8.com/3d-fluency/94/resume.png" alt="Logo" width="40">
+                ResumAI
+            </a>
+            <a href="/" class="nav-btn">Analyze Resume</a>
+        </nav>
+
+        <!-- Hero for Jobs -->
+        <div class="hero-content" style="text-align:center; margin-bottom:3rem; padding-top:2rem;">
+            <h1>Active Corporate Openings</h1>
+            <p>Live listings from Infosys, TCS, Google, Microsoft & More</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div style="margin-bottom:3rem; display:flex; gap:1rem; justify-content:center;">
+            <div style="position:relative; width:400px;">
+                <i class="fas fa-search" style="position:absolute; left:1rem; top:1rem; color:#94a3b8;"></i>
+                <input type="text" id="search-input" placeholder="Search Role (e.g. Java, Python)..."
+                    style="padding:1rem 1rem 1rem 3rem; border-radius:50px; border:1px solid #cbd5e1; width:100%; font-family:'Inter'; outline:none; transition:border 0.3s;">
+            </div>
+            <button onclick="fetchJobs()" class="btn-primary" style="padding:0.8rem 2.5rem;">Find Jobs</button>
+        </div>
+
+        <!-- Jobs Grid -->
+        <div class="job-grid" id="jobs-container">
+            <div class="glass-card" style="grid-column: span 3; text-align:center;">
+                <img src="https://img.icons8.com/fluency/48/spinner-frame-5.png" class="spinner">
+                <p>Fetching active corporate listings...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="margin-top:auto; padding:2rem 0; border-top:1px solid #cbd5e1; color:#64748b; text-align:center;">
+        <p>&copy; 2026 ResumAI. Real-time Job Scraper.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', fetchJobs);
+
+        // Allow Enter key to search
+        document.getElementById('search-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') fetchJobs();
+        });
+
+        async function fetchJobs() {
+            const query = document.getElementById('search-input').value;
+            const container = document.getElementById('jobs-container');
+            container.innerHTML = '<div style="grid-column:span 3; text-align:center; padding:5rem;"><img src="https://img.icons8.com/fluency/48/spinner-frame-5.png" style="animation:spin 1s infinite; width:50px; margin-bottom:1rem;"><p style="color:#64748b; font-size:1.1rem;">Accessing Corporate Aggregators...</p></div>';
+
+            try {
+                const res = await fetch(`/api/jobs?query=${encodeURIComponent(query)}`);
+                const jobs = await res.json();
+
+                container.innerHTML = '';
+                if (jobs.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; grid-column:span 3; padding:3rem;">
+                            <img src="https://img.icons8.com/fluency/96/nothing-found.png" style="opacity:0.6; margin-bottom:1rem;">
+                            <p style="color:#64748b; font-size:1.2rem;">No active listings found for "${query}".</p>
+                            <p style="color:#94a3b8;">Try simpler keywords like "Java", "Analyst", or "Intern".</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                jobs.forEach(job => {
+                    const logo = job.logo || 'https://img.icons8.com/fluency/48/company.png';
+                    const tag = job.tags && job.tags[0] ? job.tags[0] : 'Active';
+                    // Truncate description safely
+                    let desc = job.description || "";
+                    desc = desc.replace(/(<([^>]+)>)/gi, "").substring(0, 100) + "...";
+
+                    container.innerHTML += `
+                        <div class="job-card">
+                            <span class="match-badge" style="background:#e0e7ff; color:var(--primary);">${tag}</span>
+                            <div class="job-header">
+                                <img src="${logo}" class="company-logo" onerror="this.src='https://img.icons8.com/fluency/48/company.png'">
+                                <div>
+                                    <h4 style="font-size:1.1rem; margin-bottom:0.2rem;">${job.title}</h4>
+                                    <p style="font-size:0.9rem; color:#64748b; font-weight:500;">${job.company}</p>
+                                </div>
+                            </div>
+                            <div style="font-size:0.85rem; color:#64748b; margin-bottom:1.2rem; line-height:1.5;">
+                                ${desc}
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:#94a3b8; margin-bottom:1.2rem; border-top:1px solid #f1f5f9; padding-top:0.8rem;">
+                                <span><i class="fas fa-map-marker-alt"></i> ${job.location || 'Remote'}</span>
+                                <span><i class="far fa-clock"></i> ${job.date}</span>
+                            </div>
+                            <a href="${job.url}" target="_blank" class="apply-link">Apply on Company Site <i class="fas fa-external-link-alt" style="font-size:0.8rem; margin-left:0.5rem;"></i></a>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                container.innerHTML = '<p style="text-align:center; grid-column:span 3; color:#ef4444;">Error accessing job feed. Please try again later.</p>';
+            }
+        }
+    </script>
+    <style>
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</body>
+
+</html>

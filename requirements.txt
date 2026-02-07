@@ -1,0 +1,9 @@
+flask
+pdfminer.six
+python-docx
+beautifulsoup4
+requests
+fake-useragent
+nltk
+spacy
+feedparser
