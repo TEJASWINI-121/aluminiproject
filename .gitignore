@@ -1,4 +1,4 @@
-# Add this content to .gitignore
+# Add this content to .gitignore is added
 __pycache__/
 *.pyc
 *.pyo
