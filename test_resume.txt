@@ -1,0 +1,13 @@
+
+John Doe
+Software Engineer
+Email: john.doe@example.com
+Phone: 1234567890
+
+Experience
+Software Engineer at Tech Corp
+- Developed web applications using Python and Flask.
+- Managed database migrations.
+
+Skills
+Python, SQL, HTML, CSS, React

@@ -89,7 +89,9 @@ def upload_file():
                 'breakdown': score_data['breakdown'],
                 'suggestions': suggestions,
                 'jobs': final_jobs[:6], # Top 6 matches
-                'resume_details': resume_data
+                'resume_details': resume_data,
+                'raw_text': score_data['raw_text'], # Phase 1 requirement
+                'interview_questions': score_data['interview_questions'] # Phase 2 requirement
             })
         except Exception as e:
             print(e)

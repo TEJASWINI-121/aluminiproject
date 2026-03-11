@@ -56,9 +56,10 @@ class JobScraper:
     def fetch_corporate_jobs(self):
         jobs = []
         # Construct a targeted RSS for big companies in India/Global
-        # "intitle:hiring" + Company Names
+        # Using "intitle:hiring" or "intitle:job" to be more specific
         companies_str = " OR ".join(f'"{c}"' for c in self.target_companies)
-        rss_url = f"https://news.google.com/rss/search?q=hiring+({urllib.parse.quote(companies_str)})+when:7d&hl=en-IN&gl=IN&ceid=IN:en"
+        # q=hiring + company + when:3d (last 3 days only for freshness)
+        rss_url = f"https://news.google.com/rss/search?q=(hiring OR job) AND ({urllib.parse.quote(companies_str)}) when:7d&hl=en-IN&gl=IN&ceid=IN:en"
         
         try:
             feed = feedparser.parse(rss_url)
@@ -66,41 +67,36 @@ class JobScraper:
                 title = entry.title
                 company = "Unknown"
                 
-                # Try to identify company from title
+                # Identify company
                 for c in self.target_companies:
                     if c.lower() in title.lower():
                         company = c
                         break
                 
+                # Date Parsing & Filtering (Critical for "Real Data")
+                published_time = entry.parsed_published_time
+                if published_time:
+                    dt = datetime.fromtimestamp(time.mktime(published_time))
+                    days_ago = (datetime.now() - dt).days
+                    if days_ago > 7: continue # Skip old news
+                    date_str = dt.strftime("%Y-%m-%d")
+                else:
+                    date_str = datetime.now().strftime("%Y-%m-%d")
+
                 if company != "Unknown":
                     jobs.append({
-                        'title': title.split('-')[0].strip(), # clean title
+                        'title': title.split('-')[0].strip(),
                         'company': company,
-                        'location': 'Multiple Locations', # Usually generic in news
+                        'location': 'Multiple Locations',
                         'url': entry.link,
                         'description': entry.summary,
-                        'date': entry.published,
-                        'tags': [company, 'Corporate', 'MNC'],
+                        'date': date_str,
+                        'tags': [company, 'Corporate', 'Fresh'],
                         'source': 'Corporate Feed',
                         'logo': self._get_logo_url(company)
                     })
         except Exception as e:
             print(f"Error fetching corporate feed: {e}")
-            
-        # Add some "Always Valid" Career Page links as fallback/featured
-        # This ensures the user ALWAYS sees these logos even if RSS is quiet
-        for c in self.target_companies:
-             jobs.append({
-                'title': f"Explore Careers at {c}",
-                'company': c,
-                'location': 'Global',
-                'url': f"https://www.google.com/search?q={c}+careers", # Safe redirect
-                'description': f"Browse active job openings directly on the {c} careers portal.",
-                'date': datetime.now().strftime("%Y-%m-%d"),
-                'tags': [c, 'Featured'],
-                'source': 'Official Portal',
-                'logo': self._get_logo_url(c)
-            })
             
         return jobs
 
@@ -115,6 +111,14 @@ class JobScraper:
                 for item in data[1:]: 
                     title = item.get('position', '')
                     if not title: continue
+                    
+                    # Date Filter
+                    date_str = item.get('date', '').split('T')[0]
+                    try:
+                        job_date = datetime.strptime(date_str, "%Y-%m-%d")
+                        if (datetime.now() - job_date).days > 14: continue # Skip > 2 weeks old
+                    except: continue # Skip if bad date
+
                     company = item.get('company', '')
                     
                     jobs.append({
@@ -123,7 +127,7 @@ class JobScraper:
                         'location': item.get('location', 'Remote'),
                         'url': item.get('url'),
                         'description': item.get('description', ''),
-                        'date': item.get('date', '').split('T')[0],
+                        'date': date_str,
                         'tags': item.get('tags', []),
                         'source': 'RemoteOK',
                         'logo': item.get('company_logo') or self._get_logo_url(company)

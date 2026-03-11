@@ -128,18 +128,38 @@ class ResumeScorer:
         )
         score = int((passed_checks / total_checks) * 100) if total_checks > 0 else 0
 
-        # We need to return structure matching app.py expectations
-        # app.py expects: score_data['total_score'], score_data['breakdown']
-        # But our new scorer returns 'score' and 'cards'.
-        # I must adapt `app.py` or this return.
-        # Let's adapt this return to match app.py for now, OR better, update app.py to match this structure.
-        # Since I am rewriting app.py anyway to ensure stability, I will stick to this structure and update app.py.
+        # --- 6. INTERVIEW PREP ---
+        interview_questions = []
+        interview_db = {
+            'python': ["Explain the difference between list and tuple.", "What are decorators?", "How does memory management work in Python?"],
+            'java': ["Difference between JDK, JRE, and JVM?", "Explain polymorphism with an example.", "What is the Spring Boot cycle?"],
+            'sql': ["Explain LEFT JOIN vs INNER JOIN.", "What is normalization?", "Difference between stored procedure and function."],
+            'html': ["What are semantic tags?", "Explain the box model.", "Difference between localStorage and sessionStorage."],
+            'css': ["Explain Flexbox vs Grid.", "What is the difference between class and ID selectors?", "How do you optimize CSS performance?"],
+            'react': ["What is the Virtual DOM?", "Explain the useEffect hook.", "State vs Props?"],
+            'machine learning': ["Bias vs Variance?", "Explain Overfitting.", "Difference between Supervised and Unsupervised learning?"],
+            'aws': ["Explain EC2 vs Lambda.", "What is S3?", "Explain IAM roles."],
+            'communication': ["Describe a time you handled a conflict.", "How do you explain technical concepts to non-tech stakeholders?"],
+            'leadership': ["How do you motivate a team?", "Describe your management style."]
+        }
+
+        # Select questions based on found skills
+        for skill in found_hard + found_soft:
+            if skill.lower() in interview_db:
+                interview_questions.extend(interview_db[skill.lower()])
         
+        # Shuffle and pick 5
+        import random
+        random.shuffle(interview_questions)
+        selected_questions = interview_questions[:5] if interview_questions else ["Describe your biggest weakness.", "Where do you see yourself in 5 years?"]
+
         return {
             'total_score': score,
             'text_lower': text_lower, # Needed for narrative generation
+            'raw_text': text, # For "Beats the Bot" view
+            'interview_questions': selected_questions,
             'metrics_count': len(numbers),
-            'breakdown': { # Backward compatibility just in case, or for app.py
+            'breakdown': { # Backward compatibility
                  'cards': {
                     'Format': format_checks,
                     'Sections': section_checks,
@@ -167,7 +187,7 @@ class ResumeScorer:
         
         # --- Grammar & Clarity ---
         # Heuristic: Check for long sentences or passive phrases (was/were + ed)
-        passive_phrases = ["was responsible for", "was involved in", "was tasked with"]
+        passive_phrases = ["was responsible for", "was involved in", "was tasked with", "responsibilities included"]
         found_passive = [p for p in passive_phrases if p in score_data['text_lower']]
         
         if found_passive:
@@ -185,7 +205,7 @@ class ResumeScorer:
 
         # --- Professional Tone ---
         # Check for informal pronouns or weak words
-        informal = ["i think", "passionate about", "hard worker", "various"]
+        informal = ["i think", "passionate about", "hard worker", "various", "bunch of"]
         found_informal = [i for i in informal if i in score_data['text_lower']]
         
         if found_informal:
@@ -215,8 +235,6 @@ class ResumeScorer:
                 'content': "Excellent use of data! You've successfully quantified your achievements.",
                 'type': 'pass'
             })
-
-
 
         # --- 4. Technical Gap Analysis (The "Real Analysis") ---
         # Check against tech_stacks

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -8,590 +8,677 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .check-item {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 0.8rem;
-            font-size: 0.95rem;
-            color: #475569;
-            align-items: flex-start;
-        }
-
-        .icon-pass {
-            color: #22c55e;
-        }
-
-        .icon-warn {
-            color: #f59e0b;
-        }
-
-        .icon-fail {
-            color: #ef4444;
-        }
-
-        .icon-info {
-            color: #3b82f6;
-        }
-
-        /* Hiring Partners Section */
-        .partners-section {
-            padding: 3rem 0;
-            background: #f8fafc;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .logos-grid {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            align-items: center;
-            flex-wrap: wrap;
-            opacity: 0.7;
-        }
-
-        .logos-grid img {
-            height: 35px;
-            filter: grayscale(100%);
-            transition: all 0.3s;
-        }
-
-        .logos-grid img:hover {
-            filter: grayscale(0%);
-            transform: scale(1.1);
-            opacity: 1;
-        }
-
-        /* Dark Theme Section */
-        .dark-section {
-            background: #0f172a;
-            color: white;
-            padding: 5rem 0;
-            margin-top: 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dark-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .dark-card {
-            background: white;
-            color: #1e293b;
-            padding: 2rem;
-            border-radius: 12px;
-            transition: transform 0.3s;
-        }
-
-        .dark-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .dark-card h3 {
-            color: #0f172a;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .checklist-item i {
-            color: #22c55e;
-        }
-
-        /* Feature & Resource Cards */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-top: 4rem;
-        }
-
-        .feature-card {
-            background: #1e293b;
-            color: white;
-            padding: 2.5rem;
-            border-radius: 16px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .feature-card p {
-            color: #94a3b8;
-        }
-
-        .resource-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .resource-card {
-            background: #f8fafc;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.3s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .resource-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .resource-img {
-            height: 180px;
-            background: #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .resource-content {
-            padding: 1.5rem;
-        }
-
-        .resource-meta {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-top: 1rem;
-        }
-
-        /* Narrative Feedback Section */
-        .narrative-item {
-            background: #fff;
-            border-left: 4px solid #4f46e5;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 0 12px 12px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .narrative-item.fail {
-            border-left-color: #ef4444;
-        }
-
-        .narrative-item.warn {
-            border-left-color: #f59e0b;
-        }
-
-        .narrative-item.pass {
-            border-left-color: #22c55e;
-        }
-
-        .narrative-item.info {
-            border-left-color: #3b82f6;
-        }
-
-        /* New Sections - Testimonials & FAQ */
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .testimonial-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            text-align: center;
-        }
-
-        .faq-item {
-            background: white;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .faq-item:hover {
-            background: #f8fafc;
-        }
-
-        .faq-q {
-            font-weight: 600;
-            color: #334155;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-a {
-            margin-top: 1rem;
-            color: #64748b;
-            display: none;
-        }
-
-        .faq-item.active .faq-a {
-            display: block;
-        }
-
-        .faq-item.active .faq-q i {
-            transform: rotate(180deg);
-            transition: transform 0.3s;
-        }
-    </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Navbar -->
-        <nav class="navbar">
-            <a href="/" class="logo">
-                <img src="https://img.icons8.com/3d-fluency/94/resume.png" alt="Logo" width="40">
-                ResumAI
-            </a>
-            <div style="display:flex; gap:1.5rem; align-items:center;">
-                <a href="#features" class="nav-link"
-                    style="color:#475569; text-decoration:none; font-weight:500;">Features</a>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
 
+    <div class="app-container">
+        <!-- Navbar -->
+        <nav class="navbar glass-panel">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <span>ResumAI</span>
+            </a>
+            <div class="nav-actions">
+                <a href="#features" class="nav-link">Features</a>
                 <a href="/jobs" class="nav-btn">Browse Jobs</a>
+                <button id="theme-toggle" class="icon-btn" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
             </div>
         </nav>
 
         <!-- Hero Section -->
         <section class="hero" id="hero">
-            <div class="hero-content">
-                <h1>AI-Powered Resume Check<br><span
-                        style="background: linear-gradient(to right, #4f46e5, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Beyond
-                        Formatting</span></h1>
-                <p>Get a deep analysis of your resume's content, impact, and skills. Tailored for top tech companies
-                    like Infosys, Google, and TCS.</p>
-
-                <div class="glass-card">
-                    <div class="drop-zone" id="drop-zone">
-                        <img src="https://img.icons8.com/fluency/48/upload-to-cloud.png" style="margin-bottom:1rem;">
-                        <p style="color:#64748b;">Drag & drop your resume (PDF/DOCX)</p>
-                        <input type="file" id="resume-file" accept=".pdf,.docx,.doc" hidden>
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <div class="badge-pill">
+                        <i class="fas fa-sparkles"></i> AI-Powered Resume Analysis
                     </div>
-                    <p id="file-name" style="font-weight:600; color:var(--primary); margin-bottom:1rem;"></p>
-                    <button id="analyze-btn" class="btn-primary" disabled>Check My Resume</button>
-                    <p style="font-size:0.8rem; color:#94a3b8; margin-top:1rem;">We check for 16 crucial points across 5
-                        categories.</p>
+                    <h1>Elevate Your Career with <br><span class="gradient-text">Intelligent Insights</span></h1>
+                    <p class="hero-subtitle">Stop guessing what recruiters want. Get a deep, 16-point analysis of your
+                        resume tailored for top tech companies.</p>
+
+                    <div class="upload-container glass-panel">
+                        <div class="drop-zone" id="drop-zone">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h3>Drag & drop your resume</h3>
+                            <p>Supports PDF, DOCX (Max 16MB)</p>
+                            <input type="file" id="resume-file" accept=".pdf,.docx,.doc" hidden>
+                            <button class="btn-secondary"
+                                onclick="document.getElementById('resume-file').click()">Browse
+                                Files</button>
+                        </div>
+
+                        <div id="file-preview" class="file-preview hidden">
+                            <div class="file-info">
+                                <i class="fas fa-file-alt"></i>
+                                <span id="file-name">resume.pdf</span>
+                            </div>
+                            <button id="remove-file" class="icon-btn-sm"><i class="fas fa-times"></i></button>
+                        </div>
+
+                        <button id="analyze-btn" class="btn-primary" disabled>
+                            <span>Analyze Resume</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <!-- CSS Resume Representation (Detailed ATS Spec) -->
+                    <div class="mini-resume ats-layout">
+                        <div class="ats-left">
+                            <div class="resume-photo-container">
+                                <div class="profile-circle"></div>
+                            </div>
+                            <div class="resume-name-box">
+                                <h1 class="candidate-name">Priya Rao</h1>
+                            </div>
+                            <div class="contact-info" style="margin-top: 1rem;">
+                                <div><i class="fas fa-phone"></i> +1 (555) 555-555</div>
+                                <div><i class="fas fa-envelope"></i> priya.rao@resumegemini.com</div>
+                                <div><i class="fas fa-globe"></i> https://resumegemini.com</div>
+                                <div><i class="fas fa-map-marker-alt"></i> Bengaluru, KA, 580001</div>
+                            </div>
+
+                            <div class="resume-section" style="margin-top: 1.5rem;">
+                                <div class="section-title"><i class="fas fa-chart-bar"></i> Skills</div>
+                                <ul class="skills-list">
+                                    <li>Agile Product Lifecycle Management</li>
+                                    <li>PLM</li>
+                                    <li>Apache Solr</li>
+                                    <li>Apache Maven</li>
+                                    <li>Apache Hadoop</li>
+                                    <li>NoSQL</li>
+                                    <li>PostgreSQL</li>
+                                    <li>Oracle Java</li>
+                                    <li>PHP: Hypertext Preprocessor</li>
+                                    <li>Apache Cassandra</li>
+                                    <li>Apache Pig</li>
+                                    <li>Python</li>
+                                    <li>LAMP Stack</li>
+                                </ul>
+                            </div>
+
+                            <div class="resume-section" style="margin-top: 1.5rem;">
+                                <div class="section-title"><i class="fas fa-language"></i> Language</div>
+                                <ul class="skills-list">
+                                    <li>English</li>
+                                    <li>French</li>
+                                    <li>German</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="ats-right">
+                            <div class="resume-section summary-box">
+                                <div class="section-title"><i class="fas fa-user"></i> Professional Summary</div>
+                                <div class="section-content">
+                                    Highly motivated and result-oriented Software Development Manager with over 10 years
+                                    of experience in the full software development lifecycle (SDLC). Proven track record
+                                    of designing and building highly scalable, secure, and performant software systems.
+                                    Passionate about leading and mentoring high-performing development teams to deliver
+                                    innovative and high-quality software solutions that consistently exceed business
+                                    objectives.
+                                </div>
+                            </div>
+
+                            <div class="resume-section">
+                                <div class="section-title"><i class="fas fa-graduation-cap"></i> Education</div>
+                                <div class="edu-item">
+                                    <div class="edu-header">
+                                        <span class="edu-school">IIT Kanpur</span>
+                                        <span class="exp-date-badge">Jun 2012</span>
+                                    </div>
+                                    <div class="edu-degree">MS - Computer Science, CGPA: 9.0</div>
+                                    <div class="edu-location">Kanpur, UP</div>
+                                </div>
+                            </div>
+
+                            <div class="resume-section">
+                                <div class="section-title"><i class="fas fa-briefcase"></i> Experience</div>
+
+                                <div class="experience-item">
+                                    <div class="exp-header">
+                                        <span class="exp-company">Accenture Services</span>
+                                        <span class="exp-date-badge">Jun 2018 - Jan 2024</span>
+                                    </div>
+                                    <div class="exp-role">Software Development Manager</div>
+                                    <div class="exp-location">San Francisco, California</div>
+                                    <ul class="exp-bullets">
+                                        <li>Delivered critical $5 million project on time and within budget, exceeding
+                                            stakeholder expectations.</li>
+                                        <li>Successfully led a cross-functional team of developers, designers, and
+                                            stakeholders to achieve key project milestones.</li>
+                                        <li>Identified and implemented cloud cost-saving strategies, resulting in
+                                            $50,000 annual savings.</li>
+                                        <li>Migrated legacy project architecture to an event-driven, highly scalable
+                                            solution, increasing system throughput by 50%.</li>
+                                        <li>Leveraged modern development frameworks and technologies to improve
+                                            application performance and maintainability.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="experience-item">
+                                    <div class="exp-header">
+                                        <span class="exp-company">PieSoft Technologies</span>
+                                        <span class="exp-date-badge">Aug 2012 - May 2018</span>
+                                    </div>
+                                    <div class="exp-role">Senior Software Development Engineer</div>
+                                    <div class="exp-location">San Jose, California</div>
+                                    <ul class="exp-bullets">
+                                        <li>Design or develop software systems, using scientific analysis and
+                                            mathematical models to predict and measure outcome and consequences of
+                                            design.</li>
+                                        <li>Optimized and improved the performance of my application by 50% and uplifted
+                                            conversion numbers by 10%.</li>
+                                        <li>Reduced the project cost by moving away from licensed software and moving to
+                                            open source.</li>
+                                        <li>Spearheaded the launch of friends & family referral program, driving a 15%
+                                            increase in customer acquisition.</li>
+                                        <li>Mentoring my junior developers, performing code reviews and driving
+                                            performance optimizations.</li>
+                                        <li>Coordinating with multiple stakeholders from business team and closing the
+                                            requirement gaps.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="resume-section">
+                                <div class="section-title"><i class="fas fa-trophy"></i> Awards</div>
+                                <ul class="skills-list">
+                                    <li>CEO's Choice Award, 2023</li>
+                                    <li>Excellence in Customer Partnership Award, 2021</li>
+                                    <li>Growth Mindset Pioneer Award, 2017</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badge -->
+                        <div class="visual-badge">
+                            <i class="fas fa-check-circle"></i> ATS Score: 92/100
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="hero-img">
-                <img src="https://cdni.iconscout.com/illustration/premium/thumb/job-search-3428236-2902694.png"
-                    alt="Career Illustration">
+        </section> <!-- End Hero Section specifically -->
+
+        <!-- How It Works Section -->
+        <section class="how-it-works" id="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon"><i class="fas fa-file-upload"></i></div>
+                    <h3>1. Upload</h3>
+                    <p>Drag and drop your resume (PDF/DOCX).</p>
+                </div>
+                <!-- Removed lines for mobile responsiveness simplicity -->
+                <div class="step-card">
+                    <div class="step-icon"><i class="fas fa-brain"></i></div>
+                    <h3>2. AI Analysis</h3>
+                    <p>Our engine scans for format and skills.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>3. Optimize</h3>
+                    <p>Get instant feedback to improve your score.</p>
+                </div>
             </div>
         </section>
 
-        <!-- Hiring Partners (New) -->
-        <div class="partners-section"
-            style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(79, 70, 229, 0.1);">
-            <p
-                style="color:#64748b; font-size:0.9rem; font-weight:600; letter-spacing:1px; margin-bottom:1.5rem; text-transform:uppercase;">
-                Trusted By Top Innovators</p>
-            <div class="logos-grid">
-                <img src="https://logo.clearbit.com/google.com" alt="Google">
-                <img src="https://logo.clearbit.com/infosys.com" alt="Infosys">
-                <img src="https://logo.clearbit.com/tcs.com?size=200" alt="TCS">
-                <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft">
-                <img src="https://logo.clearbit.com/amazon.com" alt="Amazon">
-                <img src="https://logo.clearbit.com/ibm.com" alt="IBM">
+        <!-- Resume Analysis Breakdown (Replaces Features) -->
+        <section class="analysis-section" id="analysis-breakdown">
+            <h2 class="section-title">Comprehensive Resume Audit</h2>
+            <div class="analysis-grid">
+                <div class="analysis-visual">
+                    <!-- CSS Resume Representation (Detailed ATS Spec) -->
+                    <div class="mini-resume ats-layout">
+                        <div class="ats-left">
+                            <div class="resume-photo-container">
+                                <div class="profile-circle"></div>
+                            </div>
+                            <div class="resume-name-box">
+                                <h1 class="candidate-name">Priya Rao</h1>
+                            </div>
+                            <div class="contact-info" style="margin-top: 1rem;">
+                                <div><i class="fas fa-phone"></i> +1 (555) 555-555</div>
+                                <div><i class="fas fa-envelope"></i> priya.rao@resumegemini.com</div>
+                                <div><i class="fas fa-globe"></i> https://resumegemini.com</div>
+                                <div><i class="fas fa-map-marker-alt"></i> Bengaluru, KA, 580001</div>
+                            </div>
+
+                            <div class="resume-section" style="margin-top: 1.5rem;">
+                                <div class="section-title"><i class="fas fa-chart-bar"></i> Skills</div>
+                                <ul class="skills-list">
+                                    <li>Agile Product Lifecycle Management</li>
+                                    <li>PLM</li>
+                                    <li>Apache Solr</li>
+                                    <li>Apache Maven</li>
+                                    <li>Apache Hadoop</li>
+                                    <li>NoSQL</li>
+                                    <li>PostgreSQL</li>
+                                    <li>Oracle Java</li>
+                                    <li>PHP: Hypertext Preprocessor</li>
+                                    <li>Apache Cassandra</li>
+                                    <li>Apache Pig</li>
+                                    <li>Python</li>
+                                    <li>LAMP Stack</li>
+                                </ul>
+                            </div>
+
+                            <div class="resume-section" style="margin-top: 1.5rem;">
+                                <div class="section-title"><i class="fas fa-language"></i> Language</div>
+                                <ul class="skills-list">
+                                    <li>English</li>
+                                    <li>French</li>
+                                    <li>German</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="ats-right">
+                            <div class="resume-section summary-box">
+                                <div class="section-title"><i class="fas fa-user"></i> Professional Summary</div>
+                                <div class="section-content">
+                                    Highly motivated and result-oriented Software Development Manager with over 10 years
+                                    of experience in the full software development lifecycle (SDLC). Proven track record
+                                    of designing and building highly scalable, secure, and performant software systems.
+                                    Passionate about leading and mentoring high-performing development teams to deliver
+                                    innovative and high-quality software solutions that consistently exceed business
+                                    objectives.
+                                </div>
+                            </div>
+
+                            <div class="resume-section">
+                                <div class="section-title"><i class="fas fa-graduation-cap"></i> Education</div>
+                                <div class="edu-item">
+                                    <div class="edu-header">
+                                        <span class="edu-school">IIT Kanpur</span>
+                                        <span class="exp-date-badge">Jun 2012</span>
+                                    </div>
+                                    <div class="edu-degree">MS - Computer Science, CGPA: 9.0</div>
+                                    <div class="edu-location">Kanpur, UP</div>
+                                </div>
+                            </div>
+
+                            <div class="resume-section">
+                                <div class="section-title"><i class="fas fa-briefcase"></i> Experience</div>
+
+                                <div class="experience-item">
+                                    <div class="exp-header">
+                                        <span class="exp-company">Accenture Services</span>
+                                        <span class="exp-date-badge">Jun 2018 - Jan 2024</span>
+                                    </div>
+                                    <div class="exp-role">Software Development Manager</div>
+                                    <div class="exp-location">San Francisco, California</div>
+                                    <ul class="exp-bullets">
+                                        <li>Delivered critical $5 million project on time and within budget, exceeding
+                                            stakeholder expectations.</li>
+                                        <li>Successfully led a cross-functional team of developers, designers, and
+                                            stakeholders to achieve key project milestones.</li>
+                                        <li>Identified and implemented cloud cost-saving strategies, resulting in
+                                            $50,000 annual savings.</li>
+                                        <li>Migrated legacy project architecture to an event-driven, highly scalable
+                                            solution, increasing system throughput by 50%.</li>
+                                        <li>Leveraged modern development frameworks and technologies to improve
+                                            application performance and maintainability.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="experience-item">
+                                    <div class="exp-header">
+                                        <span class="exp-company">PieSoft Technologies</span>
+                                        <span class="exp-date-badge">Aug 2012 - May 2018</span>
+                                    </div>
+                                    <div class="exp-role">Senior Software Development Engineer</div>
+                                    <div class="exp-location">San Jose, California</div>
+                                    <ul class="exp-bullets">
+                                        <li>Design or develop software systems, using scientific analysis and
+                                            mathematical models to predict and measure outcome and consequences of
+                                            design.</li>
+                                        <li>Optimized and improved the performance of my application by 50% and uplifted
+                                            conversion numbers by 10%.</li>
+                                        <li>Reduced the project cost by moving away from licensed software and moving to
+                                            open source.</li>
+                                        <li>Spearheaded the launch of friends & family referral program, driving a 15%
+                                            increase in customer acquisition.</li>
+                                        <li>Mentoring my junior developers, performing code reviews and driving
+                                            performance optimizations.</li>
+                                        <li>Coordinating with multiple stakeholders from business team and closing the
+                                            requirement gaps.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="resume-section">
+                                <div class="section-title"><i class="fas fa-trophy"></i> Awards</div>
+                                <ul class="skills-list">
+                                    <li>CEO's Choice Award, 2023</li>
+                                    <li>Excellence in Customer Partnership Award, 2021</li>
+                                    <li>Growth Mindset Pioneer Award, 2017</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badge (Kept for effect) -->
+                        <div class="visual-badge">
+                            <i class="fas fa-check-circle"></i> ATS Score: 92/100
+                        </div>
+                    </div>
+                </div>
+                <div class="analysis-content">
+                    <ul class="analysis-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <strong>Impact & Metrics</strong>
+                                <p>We check if you've quantified your achievements (e.g., "Increased sales by 20%").</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <strong>Action Verbs</strong>
+                                <p>Ensures you use strong, active language like "Spearheaded" or "Developed".</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <strong>Skill Gap Analysis</strong>
+                                <p>Compares your skills against standard industry stacks (e.g., React + Redux).</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <strong>ATS Parsing</strong>
+                                <p>Verifies if your contact info and sections are machine-readable.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        </section>
 
         <!-- Loading Overlay -->
         <div id="loading" class="loading-overlay hidden">
-            <img src="https://cdni.iconscout.com/illustration/premium/thumb/ai-brain-4777598-3977539.png" width="200"
-                style="margin-bottom:2rem; animation: float 3s infinite;">
-            <h2>AI is analyzing your profile...</h2>
-            <p>Checking 5 Pillars: Format, Content, Style, Skills, Sections</p>
+            <div class="loader-content">
+                <div class="spinner"></div>
+                <h2>Analyzing your profile...</h2>
+                <p id="loading-text">Checking formatting...</p>
+            </div>
         </div>
 
         <!-- Dashboard Result (Hidden initially) -->
         <div id="results-dashboard" class="dashboard hidden">
-            <!-- Header Scope -->
-            <div style="grid-column: span 12; display:flex; justify-content:space-between; align-items:center;">
-                <h2>Analysis Report</h2>
-                <div
-                    style="display:flex; align-items:center; gap:1rem; background:white; padding:0.5rem 1.5rem; border-radius:50px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                    <span style="font-weight:600; color:#64748b;">Overall Score:</span>
-                    <span id="score-display"
-                        style="font-size:1.5rem; font-weight:700; color:var(--primary);">0/100</span>
+
+            <!-- Actions Toolbar -->
+            <div class="actions-toolbar glass-panel">
+                <button class="btn-text" onclick="location.reload()"><i class="fas fa-arrow-left"></i> Analyze
+                    Another</button>
+                <div class="actions-group">
+                    <button class="btn-secondary" id="download-btn"><i class="fas fa-download"></i> Download
+                        Report</button>
+                    <button class="btn-primary"
+                        onclick="document.getElementById('jobs-section').scrollIntoView({behavior: 'smooth'})">View
+                        Jobs</button>
                 </div>
             </div>
 
-            <!-- V6 Narrative Suggestions (New) -->
-            <div style="grid-column: span 12; margin-top:2rem;">
-                <h3 style="margin-bottom:1rem;">Detailed Critique</h3>
-                <div id="narrative-container">
-                    <!-- Injected via JS -->
+            <!-- Main Score Card -->
+            <div class="score-overview glass-panel" id="score-card">
+                <div class="score-circle-container">
+                    <svg class="progress-ring" width="120" height="120">
+                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.1)" stroke-width="8"
+                            fill="transparent" r="52" cx="60" cy="60" />
+                        <circle class="progress-ring__circle" stroke="var(--primary)" stroke-width="8"
+                            fill="transparent" r="52" cx="60" cy="60" />
+                    </svg>
+                    <div class="score-value">
+                        <span id="score-display">0</span>
+                        <span class="score-label">/100</span>
+                    </div>
+                </div>
+                <div class="score-details">
+                    <h2>Resume Score</h2>
+                    <p id="score-message">Great start, but there's room for improvement.</p>
+                    <div class="score-stats">
+                        <div class="stat-item">
+                            <span class="stat-val" id="metrics-count">0</span>
+                            <span class="stat-label">Metrics Found</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-val" id="skills-count">0</span>
+                            <span class="stat-label">Skills Identified</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- V5 Grid Layout -->
-            <div style="grid-column: span 12;" class="results-grid" id="analysis-grid">
-                <!-- Cards Injected JS -->
+            <div class="dashboard-grid">
+                <!-- Left Column: Checks -->
+                <div class="main-analysis">
+                    <!-- Cards Injected JS -->
+                    <div id="analysis-grid" class="cards-grid"></div>
+                </div>
+
+                <!-- Right Column: Features -->
+                <div class="sidebar-analysis">
+
+                    <!-- Interview Prep (New) -->
+                    <div class="feature-card glass-panel">
+                        <h3 class="card-title"><i class="fas fa-user-tie"></i> Interview Prep</h3>
+                        <p class="card-subtitle">AI-generated questions based on your skills.</p>
+                        <div id="interview-questions" class="questions-list">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Narrative Feedback -->
+                    <div class="feature-card glass-panel">
+                        <h3 class="card-title"><i class="fas fa-comment-alt"></i> AI Critique</h3>
+                        <div id="narrative-container" class="narrative-list">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- "Beats the Bot" Raw Text (New) -->
+                    <div class="feature-card glass-panel">
+                        <div class="card-header-toggle" onclick="toggleRawText()">
+                            <h3 class="card-title"><i class="fas fa-robot"></i> Beats the Bot?</h3>
+                            <i class="fas fa-chevron-down" id="raw-text-icon"></i>
+                        </div>
+                        <div id="raw-text-container" class="raw-text-box hidden">
+                            <p class="info-text">This is exactly what the ATS reads. Check for garbled text.</p>
+                            <pre id="raw-text-content"></pre>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
-            <!-- Jobs -->
-            <div class="jobs-section">
-                <h3 style="margin-bottom:1.5rem;">Recommended Corp Jobs</h3>
+            <!-- Jobs Section -->
+            <div id="jobs-section" class="jobs-section glass-panel">
+                <h3 class="section-title">Recommended Roles <span class="badge">Based on your skills</span></h3>
                 <div class="job-grid" id="jobs-list">
                     <!-- Injected via JS -->
                 </div>
             </div>
+
         </div>
-
-    </div>
-
-    <!-- MAIN CONTENT SECTIONS (Visible on Home) -->
-    <div id="landing-content">
-
-        <!-- Key Features (Brand Gradient) -->
-        <div id="features"
-            style="background: linear-gradient(135deg, #312e81 0%, #4338ca 100%); padding:6rem 0; margin-top:4rem; position:relative; overflow:hidden;">
-            <!-- Decorators -->
-            <div
-                style="position:absolute; top:-50px; right:-50px; width:200px; height:200px; background:rgba(255,255,255,0.1); border-radius:50%;">
-            </div>
-            <div
-                style="position:absolute; bottom:-50px; left:-50px; width:200px; height:200px; background:rgba(255,255,255,0.05); border-radius:50%;">
-            </div>
-
-            <div class="container" style="position:relative; z-index:1;">
-                <h2 style="text-align:center; color:white; font-size:2.5rem; margin-bottom:2rem;">Key Features of
-                    ResumAI</h2>
-                <div class="feature-grid">
-                    <div class="feature-card"
-                        style="background: rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2);">
-                        <h3>Optimized for ATS</h3>
-                        <p style="color:rgba(255,255,255,0.8);">Use our analysis to implement expert-recommended updates
-                            designed to optimize your resume for
-                            ATS screening.</p>
-                        <div
-                            style="background:#22c55e; width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:absolute; top:2rem; right:2rem; color:white; font-weight:bold; font-size:1.5rem; box-shadow:0 10px 20px rgba(34, 197, 94, 0.4);">
-                            95</div>
-                    </div>
-                    <div class="feature-card"
-                        style="background: rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2);">
-                        <h3>Tailored Content Suggestions</h3>
-                        <p style="color:rgba(255,255,255,0.8);">Add ready-made resume content written by professional
-                            resume analysts to highlight your
-                            relevant skills and experience.</p>
-                        <i class="fas fa-magic"
-                            style="position:absolute; top:2rem; right:2rem; font-size:2rem; color:#818cf8; opacity:0.8;"></i>
-                    </div>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-icon sm"><i class="fas fa-rocket"></i></div>
+                    <span>ResumAI</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact Support</a>
+                </div>
+                <div class="footer-copy">
+                    &copy; 2026 ResumAI. All rights reserved.
                 </div>
             </div>
-        </div>
+        </footer>
 
-        <!-- Checklist Grid (Enhancv Style) -->
-        <div style="background: linear-gradient(to bottom, #f8fafc, #eff6ff); padding:6rem 0;">
-            <div class="container">
-                <h2 style="text-align:center; font-size:2.5rem; color:#1e293b; margin-bottom:1rem;">Resume Optimization
-                    Checklist</h2>
-                <p style="text-align:center; color:#64748b; max-width:600px; margin: 0 auto 3rem auto;">We check for 16
-                    crucial things across 5 different categories to ensure your resume is ready for top recruiters.</p>
-
-                <div class="dark-grid" style="margin-top:0;">
-                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
-                        <h3><i class="fas fa-file-alt" style="color:#4f46e5;"></i> Format</h3>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> File format & size</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Resume length</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Formatting consistency</div>
-                    </div>
-                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
-                        <h3><i class="fas fa-pen-fancy" style="color:#ec4899;"></i> Content</h3>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> ATS parse rate</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Repetition of words</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Spelling and grammar</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Quantifying impact (metrics)
-                        </div>
-                    </div>
-                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
-                        <h3><i class="fas fa-layer-group" style="color:#06b6d4;"></i> Sections</h3>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Contact information</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Essential sections</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Personality showcase</div>
-                    </div>
-                    <div class="dark-card" style="border:1px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
-                        <h3><i class="fas fa-feather-alt" style="color:#f59e0b;"></i> Style & Skills</h3>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Usage of active voice</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Usage of buzzwords</div>
-                        <div class="checklist-item"><i class="fas fa-check-square"></i> Hard & Soft skills balance</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Success Stories (Testimonials) -->
-        <div style="background:white; padding:6rem 0;">
-            <div class="container">
-                <h2 style="text-align:center; font-size:2.5rem; color:#1e293b; margin-bottom:3rem;">Success Stories</h2>
-                <div class="testimonial-grid">
-                    <div class="testimonial-card">
-                        <p style="color:#64748b; font-style:italic; margin-bottom:1rem;">"ResumAI corrected my passive
-                            voice and helped me quantify my impact. I got an interview at Infosys within a week!"</p>
-                        <div style="display:flex; justify-content:center; align-items:center; gap:0.5rem;">
-                            <img src="https://randomuser.me/api/portraits/women/65.jpg" width="40"
-                                style="border-radius:50%;">
-                            <strong>Priya S.</strong>
-                        </div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p style="color:#64748b; font-style:italic; margin-bottom:1rem;">"The detailed checklist showed
-                            me I was missing essential keywords for my target role. Highly recommended."</p>
-                        <div style="display:flex; justify-content:center; align-items:center; gap:0.5rem;">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" width="40"
-                                style="border-radius:50%;">
-                            <strong>Rahul M.</strong>
-                        </div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p style="color:#64748b; font-style:italic; margin-bottom:1rem;">"Simple, fast, and effective.
-                            The AI suggestions were spot on, especially regarding formatting."</p>
-                        <div style="display:flex; justify-content:center; align-items:center; gap:0.5rem;">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" width="40"
-                                style="border-radius:50%;">
-                            <strong>Anjali K.</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- FAQ Section -->
-        <div style="background:white; padding:6rem 0;">
-            <div class="container" style="max-width:800px;">
-                <h2 style="text-align:center; font-size:2.5rem; color:#1e293b; margin-bottom:3rem;">Frequently Asked
-                    Questions</h2>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-q">Is this resume checker free? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-a">Yes, ResumAI provides a comprehensive analysis of your resume for free, tailored
-                        for students and professionals.</div>
-                </div>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-q">How does the AI scoring work? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-a">We use Natural Language Processing (NLP) to analyze 5 key pillars: Format,
-                        Content, Skills, Style, and Sections, comparing them against industry standards.</div>
-                </div>
-                <div class="faq-item" onclick="this.classList.toggle('active')">
-                    <div class="faq-q">Is my data secure? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-a">Absolutely. Your resume is processed securely and is not stored permanently on
-                        our servers after the session ends.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer style="background:#0f172a; color:#64748b; padding:2rem 0; text-align:center; border-top:1px solid #1e293b;">
-        <p>&copy; 2026 ResumAI. AI-Powered Career Consultancy.</p>
-    </footer>
+    </div> <!-- End app-container -->
 
     <script>
+        // --- State ---
+        const state = {
+            theme: localStorage.getItem('theme') || 'light',
+            history: JSON.parse(localStorage.getItem('resumeHistory')) || []
+        };
+
+        // --- Elements ---
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('resume-file');
-        const fileNameDisplay = document.getElementById('file-name');
         const analyzeBtn = document.getElementById('analyze-btn');
         const loadingScreen = document.getElementById('loading');
         const hero = document.getElementById('hero');
         const dashboard = document.getElementById('results-dashboard');
+        const filePreview = document.getElementById('file-preview');
+        const fileNameDisplay = document.getElementById('file-name');
+        const removeFileBtn = document.getElementById('remove-file');
+        const loadingText = document.getElementById('loading-text');
 
-        // Hide these on analysis
-        const landingContent = document.getElementById('landing-content');
-        const partnersSec = document.querySelector('.partners-section'); // Also hide partners
+        // --- Init ---
+        function init() {
+            applyTheme(state.theme);
+            // renderHistory(); // Removed
+        }
 
-        // Drag & Drop
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        // --- Theme Logic ---
+        themeToggle.addEventListener('click', () => {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', state.theme);
+            applyTheme(state.theme);
+        });
+
+        function applyTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            const icon = themeToggle.querySelector('i');
+            icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        // --- History Logic ---
+        function addToHistory(score, filename) {
+            const item = { score, filename, date: new Date().toLocaleDateString() };
+            // Deduplicate by filename
+            state.history = state.history.filter(h => h.filename !== filename);
+            state.history.unshift(item);
+            if (state.history.length > 5) state.history.pop();
+            localStorage.setItem('resumeHistory', JSON.stringify(state.history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            if (state.history.length === 0) return;
+
+            list.innerHTML = state.history.map(item => `
+                <div class="history-item">
+                    <div class="history-score">${item.score}</div>
+                    <div class="history-info">
+                        <span class="history-name">${item.filename}</span>
+                        <span class="history-date">${item.date}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- File Handling ---
+        dropZone.addEventListener('click', (e) => {
+            if (e.target !== removeFileBtn && !filePreview.contains(e.target)) fileInput.click();
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('dragover');
             if (e.dataTransfer.files.length) {
-                fileInput.files = e.dataTransfer.files;
-                handleFileSelect();
+                handleFiles(e.dataTransfer.files);
             }
         });
 
-        fileInput.addEventListener('change', handleFileSelect);
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 
-        function handleFileSelect() {
-            if (fileInput.files.length) {
-                fileNameDisplay.textContent = fileInput.files[0].name;
+        removeFileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.value = '';
+            filePreview.classList.add('hidden');
+            dropZone.querySelector('.upload-icon').style.display = 'block';
+            dropZone.querySelector('h3').style.display = 'block';
+            dropZone.querySelector('p').style.display = 'block';
+            dropZone.querySelector('button').style.display = 'inline-block';
+            analyzeBtn.disabled = true;
+        });
+
+        function handleFiles(files) {
+            if (files.length) {
+                fileNameDisplay.textContent = files[0].name;
+                filePreview.classList.remove('hidden');
+                // Hide default upload UI elements for cleaner look
+                dropZone.querySelector('.upload-icon').style.display = 'none';
+                dropZone.querySelector('h3').style.display = 'none';
+                dropZone.querySelector('p').style.display = 'none';
+                dropZone.querySelector('.btn-secondary').style.display = 'none';
+
                 analyzeBtn.disabled = false;
             }
         }
 
+        // --- Analysis Logic ---
         analyzeBtn.addEventListener('click', async () => {
             if (!fileInput.files.length) return;
             const formData = new FormData();
             formData.append('resume', fileInput.files[0]);
 
             loadingScreen.classList.remove('hidden');
-            hero.style.opacity = '0.1';
-            landingContent.style.opacity = '0.1';
-            partnersSec.style.opacity = '0.1';
+            const messages = ["Reading file...", "Extracting skills...", "Comparing with job market...", "Generating interview questions...", "Finalizing report..."];
+            let msgIdx = 0;
+            const interval = setInterval(() => {
+                loadingText.textContent = messages[msgIdx++ % messages.length];
+            }, 800);
 
             try {
                 const response = await fetch('/upload', { method: 'POST', body: formData });
                 const data = await response.json();
+                clearInterval(interval);
 
                 if (response.ok) {
                     renderDashboard(data);
+                    renderDashboard(data);
+                    // addToHistory(data.score, fileInput.files[0].name); // Removed
                 } else {
                     alert('Error: ' + data.error);
                     location.reload();
                 }
             } catch (error) {
+                console.error(error);
                 alert('Analysis failed. Please try again.');
                 location.reload();
             }
@@ -600,90 +687,196 @@
         function renderDashboard(data) {
             loadingScreen.classList.add('hidden');
             hero.style.display = 'none';
-            landingContent.style.display = 'none';
-            partnersSec.style.display = 'none';
+            // document.querySelector('.history-widget').style.display = 'none'; // Optional: hide history on dashboard
             dashboard.classList.remove('hidden');
 
-            document.getElementById('score-display').textContent = `${data.score}/100`;
+            // 1. Score Circle
+            const circle = document.querySelector('.progress-ring__circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            const offset = circumference - (data.score / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
 
-            // Render Narrative Feedback
+            // Color based on score
+            if (data.score < 50) circle.style.stroke = 'var(--error)';
+            else if (data.score < 80) circle.style.stroke = 'var(--warning)';
+            else circle.style.stroke = 'var(--success)';
+
+            document.getElementById('score-display').textContent = data.score;
+            document.getElementById('metrics-count').textContent = data.metrics_count || 0;
+            document.getElementById('skills-count').textContent = (data.resume_details.skills || []).length;
+
+            // Score Message
+            const msgEl = document.getElementById('score-message');
+            if (data.score >= 80) msgEl.textContent = "Outstanding! Your resume is ready for top tier companies.";
+            else if (data.score >= 50) msgEl.textContent = "Good foundation, but needs optimization to pass ATS.";
+            else msgEl.textContent = "Needs significant improvements to be competitive.";
+
+            // 2. Render Narratives
             const narrContainer = document.getElementById('narrative-container');
             narrContainer.innerHTML = '';
             if (data.suggestions && data.suggestions.length > 0) {
                 data.suggestions.forEach(s => {
                     narrContainer.innerHTML += `
                         <div class="narrative-item ${s.type}">
-                            <h4 style="color:#1e293b; margin-bottom:0.5rem;">${s.title}</h4>
-                            <p style="color:#475569;">${s.content}</p>
+                            <div class="narrative-icon"><i class="fas ${getIconForType(s.type)}"></i></div>
+                            <div>
+                                <h4>${s.title}</h4>
+                                <p>${s.content}</p>
+                            </div>
                         </div>
                     `;
                 });
             } else {
-                narrContainer.innerHTML = '<p>No specific narrative feedback.</p>';
+                narrContainer.innerHTML = '<p class="empty-state">No specific feedback generated.</p>';
             }
 
-            // Render Checks
+            // 3. Render Checks Grid
             const grid = document.getElementById('analysis-grid');
             grid.innerHTML = '';
-
-            const icons = { 'Format': 'fa-file-alt', 'Sections': 'fa-layer-group', 'Content': 'fa-pen-fancy', 'Skills': 'fa-lightbulb', 'Style': 'fa-feather-alt' };
             const cardsData = data.breakdown.cards || data.breakdown;
 
             for (const [category, checks] of Object.entries(cardsData)) {
-                let checkHTML = '';
-                if (Array.isArray(checks)) {
-                    checks.forEach(c => {
-                        let iconClass = 'icon-pass fa-check-circle';
-                        if (c.status === 'warn') iconClass = 'icon-warn fa-exclamation-circle';
-                        if (c.status === 'fail') iconClass = 'icon-fail fa-times-circle';
-                        if (c.status === 'info') iconClass = 'icon-info fa-info-circle';
-
-                        checkHTML += `
-                            <div class="check-item">
-                                <i class="fas ${iconClass}" style="margin-top:3px;"></i>
-                                <div>
-                                    <strong>${c.item}</strong>
-                                    <div style="font-size:0.85rem; color:#64748b;">${c.msg}</div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
+                let itemsHTML = '';
+                checks.forEach(c => {
+                    itemsHTML += `
+                        <div class="check-row">
+                            <i class="fas ${getIconForStatus(c.status)} status-${c.status}"></i>
+                            <span class="check-text">${c.item}</span>
+                            <span class="check-msg">${c.msg}</span>
+                        </div>
+                    `;
+                });
 
                 grid.innerHTML += `
-                    <div class="result-card">
+                    <div class="analysis-card glass-panel">
                         <div class="card-header">
-                            <i class="fas ${icons[category] || 'fa-check'}" style="color:var(--primary);"></i>
-                            ${category}
+                            <i class="fas ${getCategoryIcon(category)}"></i>
+                            <h3>${category}</h3>
                         </div>
-                        ${checkHTML}
+                        <div class="card-body">
+                            ${itemsHTML}
+                        </div>
                     </div>
                 `;
             }
 
+            // 4. Interview Questions (New)
+            const interviewDiv = document.getElementById('interview-questions');
+            if (data.interview_questions && data.interview_questions.length > 0) {
+                interviewDiv.innerHTML = data.interview_questions.map(q => `
+                    <div class="question-item">
+                        <i class="fas fa-question-circle"></i>
+                        <p>${q}</p>
+                    </div>
+                `).join('');
+            } else {
+                interviewDiv.innerHTML = '<p class="empty-state">Add more skills to get interview questions.</p>';
+            }
+
+            // 5. Raw Text (New)
+            document.getElementById('raw-text-content').textContent = data.raw_text || "Raw text unavailable.";
+
+            // 6. Jobs
+            renderJobs(data.jobs);
+        }
+
+        function renderJobs(jobs) {
             const jobsDiv = document.getElementById('jobs-list');
             jobsDiv.innerHTML = '';
-            data.jobs.slice(0, 6).forEach(job => {
-                const logo = job.logo || 'https://img.icons8.com/fluency/48/company.png';
-                jobsDiv.innerHTML += `
-                    <div class="job-card">
-                        <span class="match-badge">${job.match_score}% Match</span>
-                        <div class="job-header">
-                            <img src="${logo}" class="company-logo" onerror="this.src='https://img.icons8.com/fluency/48/company.png'">
-                            <div>
-                                <h4 style="font-size:1.1rem;">${job.title}</h4>
-                                <p style="font-size:0.9rem; color:#64748b;">${job.company}</p>
+            if (jobs && jobs.length > 0) {
+                jobs.slice(0, 6).forEach(job => {
+                    jobsDiv.innerHTML += `
+                        <div class="job-card glass-panel">
+                            <div class="job-match-badge">${job.match_score || 85}% Match</div>
+                            <div class="job-icon">
+                                <img src="${job.logo || 'https://img.icons8.com/fluency/48/company.png'}" onerror="this.src='https://img.icons8.com/fluency/48/company.png'">
                             </div>
+                            <h4 class="job-title">${job.title}</h4>
+                            <p class="job-company">${job.company}</p>
+                            <a href="${job.url}" target="_blank" class="btn-sm btn-outline">Apply Now</a>
                         </div>
-                        <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">${job.match_reason ? job.match_reason[0] : 'Matches your skills'}</p>
-                        <a href="${job.url}" target="_blank" class="apply-link">Apply Now</a>
-                    </div>
-                `;
-            });
-            if (data.jobs.length === 0) {
-                jobsDiv.innerHTML = '<p style="text-align:center; grid-column:span 3;">No specific matches found. Try refreshing or adding more specific skills.</p>';
+                    `;
+                });
+            } else {
+                jobsDiv.innerHTML = '<div class="empty-state">No matching jobs found.</div>';
             }
         }
+
+        // --- Helpers ---
+        function getIconForType(type) {
+            if (type === 'pass') return 'fa-check';
+            if (type === 'warn') return 'fa-exclamation-triangle';
+            if (type === 'fail') return 'fa-times';
+            return 'fa-info-circle';
+        }
+
+        function getIconForStatus(status) {
+            if (status === 'pass') return 'fa-check-circle';
+            if (status === 'warn') return 'fa-exclamation-circle';
+            if (status === 'fail') return 'fa-times-circle';
+            return 'fa-info-circle';
+        }
+
+        function getCategoryIcon(cat) {
+            const map = {
+                'Format': 'fa-file-alt',
+                'Sections': 'fa-layer-group',
+                'Content': 'fa-align-left',
+                'Skills': 'fa-tools',
+                'Style': 'fa-feather'
+            };
+            return map[cat] || 'fa-clipboard-check';
+        }
+
+        // --- New Features Logic ---
+        function toggleRawText() {
+            const container = document.getElementById('raw-text-container');
+            const icon = document.getElementById('raw-text-icon');
+            container.classList.toggle('hidden');
+            icon.classList.toggle('fa-rotate-180');
+        }
+
+        // PDF Download
+        // PDF Download
+        document.getElementById('download-btn').addEventListener('click', () => {
+            const element = document.getElementById('results-dashboard');
+            const originalTheme = state.theme; // Save current theme
+
+            // 1. Force Light Mode for PDF
+            applyTheme('light');
+
+            // 2. Hide buttons to clean up the view
+            const buttons = element.querySelectorAll('button, .actions-toolbar');
+            buttons.forEach(b => b.style.display = 'none');
+
+            const opt = {
+                margin: 0.2, // Small margin
+                filename: 'ResumAI_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // 3. Generate PDF
+            html2pdf().set(opt).from(element).save()
+                .then(() => {
+                    // 4. Restore original state
+                    applyTheme(originalTheme);
+                    buttons.forEach(b => b.style.display = '');
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("PDF generation failed.");
+                    applyTheme(originalTheme); // Restore on error
+                    buttons.forEach(b => b.style.display = '');
+                });
+        });
+
+        // Start
+        init();
+
     </script>
 </body>
 
